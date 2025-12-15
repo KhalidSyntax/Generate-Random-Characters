@@ -9,12 +9,18 @@ namespace GenerateRandomCharacters
     {
         static Random rand = new Random();
 
-        enum enCharType { SmallLetter = 1, CapitalLetter = 2, SpecialCharacter = 3, Digit = 4, Mix = 5 };
+        enum enCharType
+        {
+            SmallLetter = 1,
+            CapitalLetter = 2,
+            SpecialCharacter = 3,
+            Digit = 4,
+            Mix = 5
+        };
 
         List<string> clipboardHistory = new List<string>();
 
         int currentIndex = -1;
-
         int maxHistory = 20;
 
         public Form1()
@@ -43,7 +49,6 @@ namespace GenerateRandomCharacters
 
             switch (randType)
             {
-
                 case enCharType.SmallLetter:
                     return (char)(rand.Next(97, 123));
 
@@ -79,6 +84,7 @@ namespace GenerateRandomCharacters
             {
                 Word.Append(GetRandomCharacter(types));
             }
+
             return Word.ToString();
         }
 
@@ -86,21 +92,20 @@ namespace GenerateRandomCharacters
         {
             List<string> parts = new List<string>();
 
-            for(byte i = 0; i <partsCount; i++)
+            for (byte i = 0; i < partsCount; i++)
             {
                 parts.Add(GenerateWord(types, partLength));
             }
+
             return string.Join("-", parts);
         }
 
-        private void GenerateKeys(List<enCharType> types, short partLength)
+        private void GenerateKeys(List<enCharType> types, short partLength, short partsCount)
         {
             txtOutput.Clear();
 
-            short partsCount = (short)nudPartsCount.Value;
-
             string key = GenerateKey(types, partLength, partsCount);
-            
+
             txtOutput.Text = key;
 
             AddToClipboardHistory(key);
@@ -116,7 +121,7 @@ namespace GenerateRandomCharacters
                 types.Add(enCharType.CapitalLetter);
                 types.Add(enCharType.SpecialCharacter);
                 types.Add(enCharType.Digit);
-                return types; 
+                return types;
             }
 
             if (cbCapital.Checked) types.Add(enCharType.CapitalLetter);
@@ -133,17 +138,38 @@ namespace GenerateRandomCharacters
 
             if (types.Count == 0)
             {
-                MessageBox.Show("Please select at least one character type", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    "Please select at least one character type.",
+                    "Warning",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
                 return;
             }
 
             if (nudLength.Value == 0)
             {
-                MessageBox.Show("Please select number of characters per part", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    "Please specify the character length.",
+                    "Warning",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
                 return;
             }
 
-            GenerateKeys(types, (short)nudLength.Value);
+            if (nudPartsCount.Value == 0)
+            {
+                MessageBox.Show(
+                    "Please specify the number of parts.",
+                    "Warning",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
+            GenerateKeys(types, (short)nudLength.Value, (short)nudPartsCount.Value);
         }
 
         private void Copy()
@@ -154,7 +180,13 @@ namespace GenerateRandomCharacters
             Clipboard.SetText(txtOutput.Text);
             txtOutput.Focus();
             txtOutput.SelectAll();
-            MessageBox.Show("Copied Successfully", "Copy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            MessageBox.Show(
+                "Copied Successfully",
+                "Copy",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
         }
 
         private void Delete()
@@ -234,7 +266,8 @@ namespace GenerateRandomCharacters
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (clipboardHistory.Count == 0) return;
+            if (clipboardHistory.Count == 0)
+                return;
 
             if (e.KeyCode == Keys.Up)
             {
@@ -244,7 +277,6 @@ namespace GenerateRandomCharacters
                     txtOutput.Text = clipboardHistory[currentIndex];
                 }
             }
-
             else if (e.KeyCode == Keys.Down)
             {
                 if (currentIndex < clipboardHistory.Count - 1)
